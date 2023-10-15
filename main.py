@@ -1,11 +1,10 @@
 import pygame
 import game
-import players
+import agents
 
 # who is running this?
-player = players.Human()
+player = agents.GreedyModel()
 
-# run the game for player
 game.run(player)
  
 pygame.quit()

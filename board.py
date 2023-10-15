@@ -7,6 +7,14 @@ def newBoard():
     addNum(cells)
     return cells
 
+# returns a copy of input cells
+def copy(cells):
+    newCells = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    for i in range(4):
+        for j in range(4):
+            newCells[i][j] = cells[i][j]
+    return newCells
+
 # adds number to the board
 def addNum(cells):
     possibilities = []
@@ -98,6 +106,8 @@ def reflect(cells):
 
 # directional moves start
 
+# in place moves
+
 def moveUp(cells, score):
     score, changed1 = combine(cells, score)
     changed2 = slide(cells)
@@ -124,6 +134,39 @@ def moveRight(cells, score):
     reflect(cells)
 
     return score, changed
+
+# copy moves
+
+def moveUpCopy(cells, score):
+    newCells = copy(cells)
+    score, changed1 = combine(newCells, score)
+    changed2 = slide(newCells)
+
+    return newCells, score, changed1 | changed2
+    
+def moveDownCopy(cells, score):
+    newCells = copy(cells)
+    flip(newCells)
+    score, changed = moveUp(newCells, score)
+    flip(newCells)
+
+    return newCells, score, changed
+
+def moveLeftCopy(cells, score):
+    newCells = copy(cells)
+    reflect(newCells)
+    score, changed = moveUp(newCells, score)
+    reflect(newCells)
+
+    return newCells, score, changed
+
+def moveRightCopy(cells, score):
+    newCells = copy(cells)
+    reflect(newCells)
+    score, changed = moveDown(newCells, score)
+    reflect(newCells)
+
+    return newCells, score, changed
 
 # directional moves end
     

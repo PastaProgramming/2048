@@ -1,7 +1,7 @@
-import players
+import agents
 import game
 
-player = players.RandomModel()
+player = agents.GreedyModel()
 average = 0
 TEST_NUM = 500
 

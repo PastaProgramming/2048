@@ -1,7 +1,13 @@
 import pygame
 import board as b
 import drawGame as draw
-import players
+import agents
+
+# key constants
+UP = 0
+DOWN = 1
+LEFT = 2
+RIGHT = 3
 
 # runs the game for given player
 def run(player):
@@ -33,21 +39,21 @@ def run(player):
                 running = False
 
         # get and act on player move
-        move = player.getMove(cells, events)
+        move = player.getMove(cells, score, events)
 
-        if move == pygame.K_UP:
+        if move == UP:
             score, changed = b.moveUp(cells, score)
             if changed:
                 b.addNum(cells)
-        elif move == pygame.K_DOWN:
+        elif move == DOWN:
             score, changed = b.moveDown(cells, score)
             if changed:
                 b.addNum(cells)
-        elif move == pygame.K_LEFT:
+        elif move == LEFT:
             score, changed = b.moveLeft(cells, score)
             if changed:
                 b.addNum(cells)
-        elif move == pygame.K_RIGHT:
+        elif move == RIGHT:
             score, changed = b.moveRight(cells, score)
             if changed:
                 b.addNum(cells)
@@ -63,12 +69,12 @@ def run(player):
 
         # check if game is over
         if b.gameIsOver(cells):
-            if type(player) == players.Human:
+            if type(player) == agents.Human:
                 draw.gameOver(screen, WINDOW_SIZE, OFFSET)
             else:
                 return score
         elif b.gameIsWon(cells):
-            if type(player) == players.Human:
+            if type(player) == agents.Human:
                 draw.gameWon(screen, WINDOW_SIZE, OFFSET)
         
         # display the rendered frame
@@ -81,23 +87,23 @@ def runNoRender(player):
     running = True
     
     while running:
-        
-        # get and act on player move
-        move = player.getMove(cells, [])
 
-        if move == pygame.K_UP:
+        # get and act on player move
+        move = player.getMove(cells, score, [])
+
+        if move == UP:
             score, changed = b.moveUp(cells, score)
             if changed:
                 b.addNum(cells)
-        elif move == pygame.K_DOWN:
+        elif move == DOWN:
             score, changed = b.moveDown(cells, score)
             if changed:
                 b.addNum(cells)
-        elif move == pygame.K_LEFT:
+        elif move == LEFT:
             score, changed = b.moveLeft(cells, score)
             if changed:
                 b.addNum(cells)
-        elif move == pygame.K_RIGHT:
+        elif move == RIGHT:
             score, changed = b.moveRight(cells, score)
             if changed:
                 b.addNum(cells)
