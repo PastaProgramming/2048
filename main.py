@@ -1,7 +1,5 @@
 import pygame
 import game
-import board as b
-import drawGame as draw
 import players
 
 

@@ -1,9 +1,6 @@
 import random
 
-
-    
-
-    # adds number to the boar
+# adds number to the board
 def addNum(cells):
     possibilities = []
     for i in range(4):

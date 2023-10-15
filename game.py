@@ -19,7 +19,7 @@ def run(player):
     screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE + OFFSET))
     clock = pygame.time.Clock()
     running = True
-
+    
 
     while running:
         # react to buttom presses
@@ -60,16 +60,53 @@ def run(player):
         draw.drawScore(screen, score, WINDOW_SIZE, OFFSET)
 
         # check if game is over
-        if b.gameIsWon(cells):
-            if type(player) == players.Human:
-                draw.gameWon(screen, WINDOW_SIZE, OFFSET)
-            else:
-                return
-        elif b.gameIsOver(cells):
+        if b.gameIsOver(cells):
             if type(player) == players.Human:
                 draw.gameOver(screen, WINDOW_SIZE, OFFSET)
             else:
-                return
+                return score
+        elif b.gameIsWon(cells):
+            if type(player) == players.Human:
+                draw.gameWon(screen, WINDOW_SIZE, OFFSET)
         
         # flip() the display to put your work on screen
         pygame.display.flip()
+
+def runNoRender(player):
+    
+    cells = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    b.addNum(cells)
+    b.addNum(cells)
+    score = 0
+    running = True
+    
+
+    while running:
+
+        move = player.getMove(cells, [])
+
+        if move == pygame.K_DOWN:
+            score, changed = b.slideDown(cells, score)
+            if changed:
+                index = b.addNum(cells)
+        elif move == pygame.K_UP:
+            score, changed = b.slideUp(cells, score)
+            if changed:
+                b.addNum(cells)
+        elif move == pygame.K_LEFT:
+            score, changed = b.slideLeft(cells, score)
+            if changed:
+                b.addNum(cells)
+        elif move == pygame.K_RIGHT:
+            score, changed = b.slideRight(cells, score)
+            if changed:
+                b.addNum(cells)
+        elif move == pygame.K_r:
+            cells = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+            b.addNum(cells)
+            b.addNum(cells)
+            score = 0
+
+        # check if game is over
+        if b.gameIsOver(cells):
+            return score
