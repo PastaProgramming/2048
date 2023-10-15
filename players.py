@@ -39,3 +39,7 @@ class RandomModel(Player):
 
     def getMove(self, cells, events):
         return random.choice([pygame.K_DOWN, pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT])
+    
+class DeterministicModel(Player):
+    pass
+

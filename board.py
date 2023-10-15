@@ -1,5 +1,12 @@
 import random
 
+# makes new board
+def newBoard():
+    cells = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    addNum(cells)
+    addNum(cells)
+    return cells
+
 # adds number to the board
 def addNum(cells):
     possibilities = []
@@ -7,9 +14,9 @@ def addNum(cells):
         for j in range(4):
             if cells[i][j] == 0:
                 possibilities.append((i,j))
-
+    
+    # no more space
     if len(possibilities) == 0:
-        # NO MORE SPACE
         return
         
     i, j = random.choice(possibilities)
@@ -31,22 +38,22 @@ def combine(cells, score):
         firstNum = None
         for j in range(4):
             currCell = cells[i][j]
-            # if we havent found a number yet
+            # if we havent found a nonzero number 
             if firstNum == None:
                 if currCell != 0:
                     firstNum = currCell
                     firstI, firstJ = i, j
             # if we have found a number to check
             else:
-                # if a combination can occur
+                # a combination can occur
                 if firstNum == currCell:
                     cells[firstI][firstJ] = 2 * firstNum
                     cells[i][j] = 0
                     score += 2 * firstNum
                     changed = True
                     firstNum = None
-                # if there's a different number below, it becomes
-                # the new number to check
+                # if there's a different nonzero number below, 
+                # it becomes the new number to check
                 elif currCell != 0:
                     firstNum = currCell
                     firstI, firstJ = i, j
@@ -57,6 +64,7 @@ def combine(cells, score):
 def slide(cells):
     changed = False
 
+    # makes all nonzero numbers "bubble" up
     for n in range(3):
         for i in range(4):
             for j in range(3):
@@ -67,6 +75,7 @@ def slide(cells):
                         changed = True
     return changed
 
+# vertically flips the board
 def flip(cells):
     for i in range(4):
         for j in range(2):
@@ -75,6 +84,7 @@ def flip(cells):
             cells[i][j] = botVal
             cells[i][3-j] = topVal
 
+# reflects the board along its main diagonal
 def reflect(cells):
     oldCells = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0],]
     for i in range(4):
@@ -86,33 +96,38 @@ def reflect(cells):
             cells[i][j] =  oldCells[j][i]
 
 
-def slideUp(cells, score):
+# directional moves start
+
+def moveUp(cells, score):
     score, changed1 = combine(cells, score)
     changed2 = slide(cells)
 
     return score, changed1 | changed2
     
-def slideDown(cells, score):
+def moveDown(cells, score):
     flip(cells)
-    score, changed = slideUp(cells, score)
+    score, changed = moveUp(cells, score)
     flip(cells)
 
     return score, changed
 
-def slideLeft(cells, score):
+def moveLeft(cells, score):
     reflect(cells)
-    score, changed = slideUp(cells, score)
+    score, changed = moveUp(cells, score)
+    reflect(cells)
+
+    return score, changed
+
+def moveRight(cells, score):
+    reflect(cells)
+    score, changed = moveDown(cells, score)
     reflect(cells)
 
     return score, changed
 
-def slideRight(cells, score):
-    reflect(cells)
-    score, changed = slideDown(cells, score)
-    reflect(cells)
-
-    return score, changed
+# directional moves end
     
+# checks if the game is over
 def gameIsOver(cells):
     # check zeroes
     for i in range(4):
@@ -135,6 +150,7 @@ def gameIsOver(cells):
     # no possible moves
     return True
 
+# checks if game has been won
 def gameIsWon(cells):
     for i in range(4):
         for j in range(4):
