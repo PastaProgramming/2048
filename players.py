@@ -30,7 +30,7 @@ class Human(Player):
                     return pygame.K_r
         return 0
     
-class DeterministicModel(Player):
+class RandomModel(Player):
     def __init__(self):
         pass
     
