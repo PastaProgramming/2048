@@ -94,22 +94,46 @@ class BFSModel(Agent):
 # I'm trying to build a heuristic
 
 import heuristicHelpers as h
+import numpy
 
 class HeuristicModel(Agent):
+    def evalDir(self, direction):
+        if direction == LEFT:
+            return 10
+        if direction == UP:
+            return 5
+        if direction == DOWN:
+            return 2
+        if direction == RIGHT:
+            return 1
+    
     def evalState(self, cells, score):
         if b.gameIsOver(cells):
             return 0
         
-        score += h.weightScore(cells)
+        evalScore = score
 
-        score += 5 * h.adjacencyScore(cells)
+        evalScore += h.weightScore(cells) * (score // 1000)
+        # evalScore += h.adjacencyScore(cells)
+        evalScore += h.differenceScore(cells) * (score // 1000)
+        evalScore += h.zeroCount(cells) * (score // 8)
 
-        
-        return score
+        return evalScore
 
     def getMove(self, cells, score, events):
-        dirScores = [0,0,0,0]
+        # time.sleep(0.4)
+        dirScores = [-numpy.inf,-numpy.inf,-numpy.inf,-numpy.inf]
+
+        if score < 1000:
+            dirScores = [5, 2, 10, 1]
+            for direction in [UP, DOWN, LEFT, RIGHT]:
+                _, _, changed = b.moveCopy(cells, score, direction)
+                if changed == False:
+                    dirScores[direction] = 0
+            bestDir = dirScores.index(max(dirScores))
+            return bestDir
         
+        # score >= 2000
         for direction in [UP, DOWN, LEFT, RIGHT]:
             newCells, score, changed = b.moveCopy(cells, score, direction)
             if changed:
