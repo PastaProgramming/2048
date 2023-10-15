@@ -37,29 +37,18 @@ def run(player):
         for event in events:
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    cells = b.newBoard()
+                    score = 0
 
         # get and act on player move
         move = player.getMove(cells, score, events)
 
-        if move == UP:
-            score, changed = b.moveUp(cells, score)
+        if move in [UP, DOWN, LEFT, RIGHT]:
+            score, changed = b.move(cells, score, move)
             if changed:
                 b.addNum(cells)
-        elif move == DOWN:
-            score, changed = b.moveDown(cells, score)
-            if changed:
-                b.addNum(cells)
-        elif move == LEFT:
-            score, changed = b.moveLeft(cells, score)
-            if changed:
-                b.addNum(cells)
-        elif move == RIGHT:
-            score, changed = b.moveRight(cells, score)
-            if changed:
-                b.addNum(cells)
-        elif move == pygame.K_r:
-            cells = b.newBoard()
-            score = 0
 
         # display frame
         screen.fill("white")
@@ -69,13 +58,9 @@ def run(player):
 
         # check if game is over
         if b.gameIsOver(cells):
-            if type(player) == agents.Human:
-                draw.gameOver(screen, WINDOW_SIZE, OFFSET)
-            else:
-                return score
+            draw.gameOver(screen, WINDOW_SIZE, OFFSET)
         elif b.gameIsWon(cells):
-            if type(player) == agents.Human:
-                draw.gameWon(screen, WINDOW_SIZE, OFFSET)
+            draw.gameWon(screen, WINDOW_SIZE, OFFSET)
         
         # display the rendered frame
         pygame.display.flip()
@@ -91,20 +76,8 @@ def runNoRender(player):
         # get and act on player move
         move = player.getMove(cells, score, [])
 
-        if move == UP:
-            score, changed = b.moveUp(cells, score)
-            if changed:
-                b.addNum(cells)
-        elif move == DOWN:
-            score, changed = b.moveDown(cells, score)
-            if changed:
-                b.addNum(cells)
-        elif move == LEFT:
-            score, changed = b.moveLeft(cells, score)
-            if changed:
-                b.addNum(cells)
-        elif move == RIGHT:
-            score, changed = b.moveRight(cells, score)
+        if move in [UP, DOWN, LEFT, RIGHT]:
+            score, changed = b.move(cells, score, move)
             if changed:
                 b.addNum(cells)
 

@@ -1,4 +1,11 @@
 import random
+import enum
+
+# key constants
+UP = 0
+DOWN = 1
+LEFT = 2
+RIGHT = 3
 
 # makes new board
 def newBoard():
@@ -135,6 +142,16 @@ def moveRight(cells, score):
 
     return score, changed
 
+def move(cells, score, dir):
+    if dir == UP:
+        return moveUp(cells, score)
+    if dir == DOWN:
+        return moveDown(cells, score)
+    if dir == LEFT:
+        return moveLeft(cells, score)
+    if dir == RIGHT:
+        return moveRight(cells, score)
+
 # copy moves
 
 def moveUpCopy(cells, score):
@@ -167,6 +184,16 @@ def moveRightCopy(cells, score):
     reflect(newCells)
 
     return newCells, score, changed
+
+def moveCopy(cells, score, dir):
+    if dir == UP:
+        return moveUpCopy(cells, score)
+    if dir == DOWN:
+        return moveDownCopy(cells, score)
+    if dir == LEFT:
+        return moveLeftCopy(cells, score)
+    if dir == RIGHT:
+        return moveRightCopy(cells, score)
 
 # directional moves end
     

@@ -1,9 +1,9 @@
 import agents
 import game
 
-player = agents.GreedyModel()
+player = agents.BFSModel(5)
 average = 0
-TEST_NUM = 500
+TEST_NUM = 50
 
 for i in range(TEST_NUM):
     average += game.runNoRender(player)

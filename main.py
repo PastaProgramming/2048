@@ -3,7 +3,7 @@ import game
 import agents
 
 # who is running this?
-player = agents.GreedyModel()
+player = agents.HeuristicModel()
 
 game.run(player)
  
