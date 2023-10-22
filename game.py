@@ -3,13 +3,7 @@ import board as b
 import drawGame as draw
 import agents
 
-# key constants
-UP = 0
-DOWN = 1
-LEFT = 2
-RIGHT = 3
-
-# runs the game for given player
+# runs the game for given agent
 def run(player):
 
     # game setup 
@@ -42,19 +36,25 @@ def run(player):
                     cells = b.newBoard()
                     score = 0
 
-        # get and act on player move
-        move = player.getMove(cells, score, events)
-
-        if move in [UP, DOWN, LEFT, RIGHT]:
-            score, changed = b.move(cells, score, move)
+        # get next move
+        if type(player) == agents.Human:
+            moveDir = player.getMove(events)
+        elif isinstance(player, agents.Agent):
+            moveDir = player.getMove(cells, score)
+        else:
+            raise TypeError("input player is not a valid player")
+        
+        # execute move
+        if moveDir in [b.Dir.UP, b.Dir.DOWN, b.Dir.LEFT, b.Dir.RIGHT]:
+            score, changed = b.move(cells, score, moveDir)
             if changed:
                 b.addNum(cells)
 
         # display frame
         screen.fill("white")
-        draw.drawBoard(screen, cells, WINDOW_SIZE, OFFSET, cellSize)
-        draw.drawGrid(screen, cells, WINDOW_SIZE, OFFSET, cellSize)
-        draw.drawScore(screen, score, WINDOW_SIZE, OFFSET)
+        draw.drawBoard(screen, cells, OFFSET, cellSize)
+        draw.drawGrid(screen, OFFSET, cellSize)
+        draw.drawScore(screen, score, OFFSET)
 
         # check if game is over
         if b.gameIsOver(cells):
@@ -65,7 +65,9 @@ def run(player):
         # display the rendered frame
         pygame.display.flip()
 
-def runNoRender(player):
+# runs a game without rendering visuals
+# not designed for human players
+def runNoRender(agent):
     
     cells = b.newBoard()
     score = 0
@@ -73,14 +75,14 @@ def runNoRender(player):
     
     while running:
 
-        # get and act on player move
-        move = player.getMove(cells, score, [])
+        # get and act on agent move
+        moveDir = agent.getMove(cells, score)
 
-        if move in [UP, DOWN, LEFT, RIGHT]:
-            score, changed = b.move(cells, score, move)
+        if moveDir in [b.Dir.UP, b.Dir.DOWN, b.Dir.LEFT, b.Dir.RIGHT]:
+            score, changed = b.move(cells, score, moveDir)
             if changed:
                 b.addNum(cells)
 
         # check if game is over
         if b.gameIsOver(cells):
-            return score
+            return score, b.gameIsWon(cells)
