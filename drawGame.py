@@ -1,9 +1,9 @@
 import pygame
 
 # font sizing for different lengths of numbers
-fontSizes = {1: 64,   2: 64,
-             3: 60,   4: 46,
-             5: 40,   6: 28}
+fontSizes = {1: 64,   2: 60,
+             3: 55,   4: 40,
+             5: 32,   6: 28}
 
 # cell color for each number
 cellColors = {0: (214, 213, 209),
@@ -13,22 +13,22 @@ cellColors = {0: (214, 213, 209),
               16: (243, 173, 134),
               32: (245, 135, 103),
               64: (243, 92, 78),
-              128: (253, 236, 158),
-              256: (253, 232, 132),
-              512: (251, 225, 102),
-              1024: (251, 220, 72),
-              2048: (251, 216, 41),
-              4096: (185, 219, 255),
-              8192: (176, 205, 253),
-              16384: (158, 179, 249),
-              32768: (151, 157, 249),
-              65536: (129, 127, 241),
-              131072: (135, 91, 239)}
+              128: (255, 236, 185),
+              256: (255, 232, 162),
+              512: (255, 225, 140),
+              1024: (250, 215, 130),
+              2048: (245, 205, 125),
+              4096: (190, 245, 250),
+              8192: (170, 210, 240),
+              16384: (150, 175, 242),
+              32768: (130, 130, 241),
+              65536: (140, 90, 200),
+              131072: (110, 60, 170)}
 
 # functions!
 
 # draws a grid, to separate cells
-def drawGrid(screen, cells, windowSize, offset, cellSize):
+def drawGrid(screen, offset, cellSize):
     for i in range(4):
         for j in range(4):
             startX = i * cellSize
@@ -37,7 +37,7 @@ def drawGrid(screen, cells, windowSize, offset, cellSize):
             pygame.draw.rect(screen, (156, 154, 141), rect, 4)
 
 # draws game cells
-def drawBoard(screen, cells, windowSize, offset, cellSize):
+def drawBoard(screen, cells, offset, cellSize):
     for i in range(4):
         for j in range(4):
             # draws rectangle based on number color
@@ -57,7 +57,7 @@ def drawBoard(screen, cells, windowSize, offset, cellSize):
                 screen.blit(text, textRect)
 
 # draws score on top of the board
-def drawScore(screen, score, windowSize, offset):
+def drawScore(screen, score, offset):
     font = pygame.font.Font('freesansbold.ttf', 32)
     scoreStr = "Score: " + str(score)
     text = font.render(scoreStr, True, "black")
@@ -66,9 +66,6 @@ def drawScore(screen, score, windowSize, offset):
     textRect = text.get_rect()
     textRect.move_ip(rightX, topY)
     screen.blit(text, textRect)
-
-def animate(screen, cells, index, windowSize, offset):
-    pass
 
 # prints game ending text based on winning or losing
 def gameEnd(screen, windowSize, offset, endText):
