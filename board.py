@@ -1,11 +1,14 @@
-import random
-import enum
+import random as rand
+from enum import Enum
 
 # key constants
-UP = 0
-DOWN = 1
-LEFT = 2
-RIGHT = 3
+class Dir(Enum):
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
+
+# -------- functions --------
 
 # makes new board
 def newBoard():
@@ -34,9 +37,9 @@ def addNum(cells):
     if len(possibilities) == 0:
         return
         
-    i, j = random.choice(possibilities)
+    i, j = rand.choice(possibilities)
         
-    if random.random() > 0.1:
+    if rand.random() > 0.1:
         toAdd = 2
     else:
         toAdd = 4
@@ -80,14 +83,13 @@ def slide(cells):
     changed = False
 
     # makes all nonzero numbers "bubble" up
-    for n in range(3):
+    for _ in range(3):
         for i in range(4):
             for j in range(3):
-                if cells[i][j] == 0:
+                if (cells[i][j] == 0) & (cells[i][j+1] != 0):
                     cells[i][j] = cells[i][j+1]
                     cells[i][j+1] = 0
-                    if cells[i][j] != 0:
-                        changed = True
+                    changed = True
     return changed
 
 # vertically flips the board
@@ -101,11 +103,8 @@ def flip(cells):
 
 # reflects the board along its main diagonal
 def reflect(cells):
-    oldCells = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0],]
-    for i in range(4):
-        for j in range(4):
-            oldCells[i][j] = cells[i][j]
-
+    oldCells = copy(cells)
+    
     for i in range(4):
         for j in range(4):
             cells[i][j] =  oldCells[j][i]
@@ -113,7 +112,7 @@ def reflect(cells):
 
 # directional moves start
 
-# in place moves
+# --- in place moves ---
 
 def moveUp(cells, score):
     score, changed1 = combine(cells, score)
@@ -143,16 +142,16 @@ def moveRight(cells, score):
     return score, changed
 
 def move(cells, score, dir):
-    if dir == UP:
+    if dir == Dir.UP:
         return moveUp(cells, score)
-    if dir == DOWN:
+    if dir == Dir.DOWN:
         return moveDown(cells, score)
-    if dir == LEFT:
+    if dir == Dir.LEFT:
         return moveLeft(cells, score)
-    if dir == RIGHT:
+    if dir == Dir.RIGHT:
         return moveRight(cells, score)
 
-# copy moves
+# --- copy moves ---
 
 def moveUpCopy(cells, score):
     newCells = copy(cells)
@@ -186,16 +185,16 @@ def moveRightCopy(cells, score):
     return newCells, score, changed
 
 def moveCopy(cells, score, dir):
-    if dir == UP:
+    if dir == Dir.UP:
         return moveUpCopy(cells, score)
-    if dir == DOWN:
+    if dir == Dir.DOWN:
         return moveDownCopy(cells, score)
-    if dir == LEFT:
+    if dir == Dir.LEFT:
         return moveLeftCopy(cells, score)
-    if dir == RIGHT:
+    if dir == Dir.RIGHT:
         return moveRightCopy(cells, score)
 
-# directional moves end
+# --- directional moves end ---
     
 # checks if the game is over
 def gameIsOver(cells):
@@ -224,6 +223,6 @@ def gameIsOver(cells):
 def gameIsWon(cells):
     for i in range(4):
         for j in range(4):
-            if cells[i][j] == 2048:
+            if cells[i][j] >= 2048:
                 return True
     return False
