@@ -1,19 +1,25 @@
 import agents
 import game
 
-player = agents.HeuristicModel()
-average = 0
+agent = agents.BFSModel(4)
+totalScore = 0
 best = 0
+winCount = 0
 TEST_NUM = 50
 
 for i in range(TEST_NUM):
-    score = game.runNoRender(player)
-    average += score
+    print("Game", i+1, end="\t")
+    score, won = game.runNoRender(agent)
+    print("score =",score)
+    totalScore += score
+    if won:
+        winCount += 1
     if score > best:
         best = score
 
-
-average /= TEST_NUM
+average = totalScore / TEST_NUM
+winPercent = winCount / TEST_NUM
 
 print("Average score:", average)
 print("Best score:", best)
+print("Win percentage:", winPercent * 100)
