@@ -1,42 +1,39 @@
 import pygame
 import random
-import time
 import board as b
 from abc import ABC, abstractmethod
 
-# key constants
-UP = 0
-DOWN = 1
-LEFT = 2
-RIGHT = 3
+# global array for looping through the directions 
+moveDirections = [b.Dir.UP, b.Dir.DOWN, b.Dir.LEFT, b.Dir.RIGHT]
 
 # abstract player class
 class Agent(ABC):
     @abstractmethod
-    def getMove(self, cells, score, events):
+    def getMove(self, cells, score):
         pass
 
 # represents human player
-class Human(Agent):
-    def getMove(self, cells, score, events):
+# note: doesn't inherit from Agent
+class Human():
+    def getMove(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
-                    return DOWN
+                    return b.Dir.DOWN
                 elif event.key == pygame.K_UP:
-                    return UP
+                    return b.Dir.UP
                 elif event.key == pygame.K_LEFT:
-                    return LEFT
+                    return b.Dir.LEFT
                 elif event.key == pygame.K_RIGHT:
-                    return RIGHT
+                    return b.Dir.RIGHT
                 elif event.key == pygame.K_r:
                     return pygame.K_r
         return -1
 
 # always makes random moves  
 class RandomModel(Agent):
-    def getMove(self, cells, score, events):
-        return random.choice([UP, DOWN, LEFT, RIGHT])
+    def getMove(self, cells, score):
+        return random.choice(moveDirections)
 
 # makes the move that gives the highest score   
 class GreedyModel(Agent):
@@ -53,13 +50,13 @@ class GreedyModel(Agent):
 
         return score
 
-    def getMove(self, cells, score, events):
+    def getMove(self, cells, score):
         dirScores = [0,0,0,0]
-        for direction in [UP, DOWN, LEFT, RIGHT]:
-            dirScores[direction] = self.evalMove(cells, score, direction)
+        for direction in moveDirections:
+            dirScores[direction.value] = self.evalMove(cells, score, direction)
 
-        bestDir = dirScores.index(max(dirScores))
-        return bestDir
+        bestDirIndex = dirScores.index(max(dirScores))
+        return moveDirections[bestDirIndex]
 
 # represents BFS search through the game
 class BFSModel(Agent):
@@ -74,39 +71,30 @@ class BFSModel(Agent):
             return score
         
         dirScores = [0,0,0,0]
-        for direction in [UP, DOWN, LEFT, RIGHT]:
+        for direction in moveDirections:
             newCells, score, changed = b.moveCopy(cells, score, direction)
+            b.addNum(newCells)
             if changed:
-                dirScores[direction] = self.evalState(newCells, score, depth - 1)
+                dirScores[direction.value] = self.evalState(newCells, score, depth - 1)
         return max(dirScores)
 
-    def getMove(self, cells, score, events):
+    def getMove(self, cells, score):
         dirScores = [0,0,0,0]
         
-        for direction in [UP, DOWN, LEFT, RIGHT]:
+        for direction in moveDirections:
             newCells, score, changed = b.moveCopy(cells, score, direction)
             if changed:
-                dirScores[direction] = self.evalState(newCells, score, self.searchDepth)
+                dirScores[direction.value] = self.evalState(newCells, score, self.searchDepth)
             
-        bestDir = dirScores.index(max(dirScores))
-        return bestDir
+        bestDirIndex = dirScores.index(max(dirScores))
+        return moveDirections[bestDirIndex]
 
 # I'm trying to build a heuristic
 
 import heuristicHelpers as h
-import numpy
+import numpy as np
 
 class HeuristicModel(Agent):
-    def evalDir(self, direction):
-        if direction == LEFT:
-            return 10
-        if direction == UP:
-            return 5
-        if direction == DOWN:
-            return 2
-        if direction == RIGHT:
-            return 1
-    
     def evalState(self, cells, score):
         if b.gameIsOver(cells):
             return 0
@@ -114,30 +102,28 @@ class HeuristicModel(Agent):
         evalScore = score
 
         evalScore += h.weightScore(cells) * (score // 1000)
-        # evalScore += h.adjacencyScore(cells)
         evalScore += h.differenceScore(cells) * (score // 1000)
         evalScore += h.zeroCount(cells) * (score // 8)
 
         return evalScore
 
-    def getMove(self, cells, score, events):
-        # time.sleep(0.4)
-        dirScores = [-numpy.inf,-numpy.inf,-numpy.inf,-numpy.inf]
+    def getMove(self, cells, score):
+        dirScores = [-np.inf,-np.inf,-np.inf,-np.inf]
 
         if score < 1000:
             dirScores = [5, 2, 10, 1]
-            for direction in [UP, DOWN, LEFT, RIGHT]:
+            for direction in moveDirections:
                 _, _, changed = b.moveCopy(cells, score, direction)
                 if changed == False:
-                    dirScores[direction] = 0
-            bestDir = dirScores.index(max(dirScores))
-            return bestDir
+                    dirScores[direction.value] = 0
+            bestDirIndex = dirScores.index(max(dirScores))
+            return moveDirections[bestDirIndex]
         
-        # score >= 2000
-        for direction in [UP, DOWN, LEFT, RIGHT]:
+        # score >= 1000
+        for direction in moveDirections:
             newCells, score, changed = b.moveCopy(cells, score, direction)
             if changed:
-                dirScores[direction] = self.evalState(newCells, score)
+                dirScores[direction.value] = self.evalState(newCells, score)
             
-        bestDir = dirScores.index(max(dirScores))
-        return bestDir
+        bestDirIndex = dirScores.index(max(dirScores))
+        return moveDirections[bestDirIndex]
